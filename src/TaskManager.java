@@ -8,11 +8,6 @@ public class TaskManager {
     private final HashMap<Integer, Epic> epics = new HashMap<>();
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
 
-    // Генерация нового уникального ID
-    private int generateId() {
-        return nextId++;
-    }
-
     // --- Методы для Task ---
 
     public ArrayList<Task> getAllTasks() {
@@ -121,7 +116,7 @@ public class TaskManager {
         int epicId = subtask.getEpicId();
         Epic epic = epics.get(epicId);
         if (epic == null) {
-            System.out.println("Эпик с id " + epicId + " не найден");
+            return;
         }
         Subtask newSubtask = new Subtask(id, subtask.getTitle(), subtask.getDescription(), subtask.getStatus(), epicId);
         subtasks.put(id, newSubtask);
@@ -137,7 +132,7 @@ public class TaskManager {
         int epicId = subtask.getEpicId();
         Epic epic = epics.get(epicId);
         if (epic == null) {
-            System.out.println("Эпик с id " + epicId + " не найден");
+            return;
         }
         subtasks.put(id, subtask);
         recalculateEpicStatus(epic);
@@ -201,5 +196,10 @@ public class TaskManager {
         } else {
             epic.setStatus(TaskStatus.IN_PROGRESS);
         }
+    }
+
+    // Генерация нового уникального ID
+    private int generateId() {
+        return nextId++;
     }
 }
