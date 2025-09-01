@@ -1,29 +1,37 @@
 import java.util.ArrayList;
 
 public class Epic extends Task {
-    // Список id подзадач
     private final ArrayList<Integer> subtaskIds = new ArrayList<>();
 
-    public Epic(int id, String title, String description) {
-        // Статус эпика задаётся менеджером, при создании NEW
-        super(id, title, description, TaskStatus.NEW);
+    public Epic(String title, String description) {
+        super(title, description);
     }
 
     public ArrayList<Integer> getSubtaskIds() {
         return subtaskIds;
     }
 
-    public void addSubtask(int subtaskId) {
-        if (!subtaskIds.contains(subtaskId)) {
-            subtaskIds.add(subtaskId);
+    public boolean addSubtask(Subtask subtask) {
+        if (subtask == null) {
+            return false;
         }
+        if (subtask.getId() == this.id) {
+            return false;
+        }
+        if (!subtaskIds.contains(subtask.getId())) {
+            subtaskIds.add(subtask.getId());
+            return true;
+        }
+        return false;
     }
+
 
     public void removeSubtask(int subtaskId) {
-        subtaskIds.remove((Integer) subtaskId);
+        subtaskIds.remove(Integer.valueOf(subtaskId));
     }
 
-    public void clearSubtasks() {
-        subtaskIds.clear();
+    @Override
+    public String toString() {
+        return String.format("Epic{id=%d, title='%s', subtasks=%s}", id, title, subtaskIds);
     }
 }
