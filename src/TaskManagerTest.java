@@ -14,7 +14,7 @@ class TaskManagerTest {
 
     @Test
     void testCreateAndGetTaskById() {
-        Task task = new Task("Task", "Description");
+        Task task = new Task(0, "Task", "Description", TaskStatus.NEW);
         manager.createTask(task);
 
         Task saved = manager.getTask(task.getId());
@@ -25,11 +25,11 @@ class TaskManagerTest {
 
     @Test
     void testCreateAndGetEpicAndSubtasks() {
-        Epic epic = new Epic("Epic", "Epic Desc");
+        Epic epic = new Epic(0, "Epic", "Epic Desc");
         manager.createEpic(epic);
 
-        Subtask sub1 = new Subtask("Sub1", "Desc1", epic.getId());
-        Subtask sub2 = new Subtask("Sub2", "Desc2", epic.getId());
+        Subtask sub1 = new Subtask(0, "Sub1", "Desc1", TaskStatus.NEW, epic.getId());
+        Subtask sub2 = new Subtask(0, "Sub2", "Desc2", TaskStatus.NEW, epic.getId());
         manager.createSubtask(sub1);
         manager.createSubtask(sub2);
 
@@ -43,7 +43,7 @@ class TaskManagerTest {
     void testSubtaskEpicIdValidation() {
         int nonexistentEpicId = 9999; // Эпика с таким ID нет в менеджере
 
-        Subtask subtask = new Subtask("Test subtask", "Description", nonexistentEpicId);
+        Subtask subtask = new Subtask(0, "Test subtask", "Description", TaskStatus.NEW, nonexistentEpicId);
         manager.createSubtask(subtask);
 
         // Проверяем, что подзадачи с таким ID нет в менеджере
@@ -52,12 +52,12 @@ class TaskManagerTest {
 
     @Test
     void testTaskEqualityById() {
-        Task task1 = new Task("Task1", "Desc");
-        Task task2 = new Task("Task2", "Desc");
+        Task task1 = new Task(0, "Task1", "Desc", TaskStatus.NEW);
+        Task task2 = new Task(0, "Task2", "Desc", TaskStatus.NEW);
         manager.createTask(task1);
         manager.createTask(task2);
 
-        Task copy = new Task("Copy", "Copy Desc");
+        Task copy = new Task(0, "Copy", "Copy Desc", TaskStatus.NEW);
         copy.setId(task1.getId());
 
         assertEquals(task1, copy);
@@ -66,22 +66,22 @@ class TaskManagerTest {
 
     @Test
     void testTaskSubclassesEqualityById() {
-        Epic epic1 = new Epic("Epic1", "Desc1");
-        Epic epic2 = new Epic("Epic2", "Desc2");
+        Epic epic1 = new Epic(0, "Epic1", "Desc1");
+        Epic epic2 = new Epic(0, "Epic2", "Desc2");
         manager.createEpic(epic1);
         manager.createEpic(epic2);
 
-        Subtask sub1 = new Subtask("Sub1", "Desc1", epic1.getId());
-        Subtask sub2 = new Subtask("Sub2", "Desc2", epic1.getId());
+        Subtask sub1 = new Subtask(0, "Sub1", "Desc1", TaskStatus.NEW, epic1.getId());
+        Subtask sub2 = new Subtask(0, "Sub2", "Desc2", TaskStatus.NEW, epic1.getId());
         manager.createSubtask(sub1);
         manager.createSubtask(sub2);
 
-        Epic epicCopy = new Epic("CopyEpic", "CopyDesc");
+        Epic epicCopy = new Epic(0, "CopyEpic", "CopyDesc");
         epicCopy.setId(epic1.getId());
         assertEquals(epic1, epicCopy);
         assertEquals(epic1.hashCode(), epicCopy.hashCode());
 
-        Subtask subCopy = new Subtask("CopySub", "CopyDesc", epic1.getId());
+        Subtask subCopy = new Subtask(0, "CopySub", "CopyDesc", TaskStatus.NEW, epic1.getId());
         subCopy.setId(sub1.getId());
         assertEquals(sub1, subCopy);
         assertEquals(sub1.hashCode(), subCopy.hashCode());
@@ -89,7 +89,7 @@ class TaskManagerTest {
 
     @Test
     void testUpdateTask() {
-        Task task = new Task("Old Title", "Old Desc");
+        Task task = new Task(0, "Old Title", "Old Desc", TaskStatus.NEW);
         manager.createTask(task);
 
         task.setTitle("New Title");
@@ -101,7 +101,7 @@ class TaskManagerTest {
 
     @Test
     void testDeleteTask() {
-        Task task = new Task("Task", "Desc");
+        Task task = new Task(0, "Task", "Desc", TaskStatus.NEW);
         manager.createTask(task);
 
         manager.deleteTaskById(task.getId());
@@ -110,10 +110,10 @@ class TaskManagerTest {
 
     @Test
     void testDeleteEpicAlsoDeletesSubtasks() {
-        Epic epic = new Epic("Epic", "Desc");
+        Epic epic = new Epic(0, "Epic", "Desc");
         manager.createEpic(epic);
 
-        Subtask subtask = new Subtask("Sub", "Desc", epic.getId());
+        Subtask subtask = new Subtask(0, "Sub", "Desc", TaskStatus.NEW, epic.getId());
         manager.createSubtask(subtask);
 
         manager.deleteEpicById(epic.getId());
@@ -126,7 +126,7 @@ class TaskManagerTest {
     void testHistoryLimitAndDuplicates() {
         // Создаем 12 задач
         for (int i = 1; i <= 12; i++) {
-            manager.createTask(new Task("Task" + i, "Desc" + i));
+            manager.createTask(new Task(0, "Task" + i, "Desc" + i, TaskStatus.NEW));
         }
 
         // Просматриваем задачи 1..12
@@ -145,13 +145,13 @@ class TaskManagerTest {
 
     @Test
     void testEpicCannotContainItselfAsSubtask() {
-        Epic epic = new Epic("Epic", "Desc");
+        Epic epic = new Epic(0, "Epic", "Desc");
         manager.createEpic(epic);
 
-        Subtask subtask = new Subtask("Sub", "Desc", epic.getId());
+        Subtask subtask = new Subtask(0, "Sub", "Desc", TaskStatus.NEW, epic.getId());
         manager.createSubtask(subtask);
 
-        epic.addSubtask(new Subtask("FakeSub", "Desc", epic.getId()) {{
+        epic.addSubtask(new Subtask(0, "FakeSub", "Desc", TaskStatus.NEW, epic.getId()) {{
             setId(epic.getId());
         }});
 
@@ -161,7 +161,7 @@ class TaskManagerTest {
 
     @Test
     void testSubtaskCannotBeItsOwnEpic() {
-        Subtask subtask = new Subtask("Subtask name", "Description", 0);
+        Subtask subtask = new Subtask(0, "Subtask name", "Description", TaskStatus.NEW, 0);
         int ownId = 123;
         subtask.setId(ownId);
 
@@ -181,16 +181,16 @@ class TaskManagerTest {
         assertNotNull(historyManager, "HistoryManager должен быть проинициализирован");
 
         // Проверим, что они готовы к работе (например, можно добавить задачу)
-        Task testTask = new Task("Test", "Desc");
+        Task testTask = new Task(0, "Test", "Desc", TaskStatus.NEW);
         taskManager.createTask(testTask);
         assertNotNull(taskManager.getTask(testTask.getId()));
     }
 
     @Test
     void testTaskManagerAddsDifferentTypesAndFindsById() {
-        Task task = new Task("Task", "Desc");
-        Epic epic = new Epic("Epic", "Desc");
-        Subtask subtask = new Subtask("Sub", "Desc", 0);
+        Task task = new Task(0, "Task", "Desc", TaskStatus.NEW);
+        Epic epic = new Epic(0, "Epic", "Desc");
+        Subtask subtask = new Subtask(0, "Sub", "Desc", TaskStatus.NEW, epic.getId());
 
         manager.createTask(task);
         manager.createEpic(epic);
@@ -213,12 +213,12 @@ class TaskManagerTest {
         TaskManager manager = new InMemoryTaskManager();
 
         // Создаём задачу с вручную заданным ID
-        Task manualTask = new Task("Manual Task", "Desc");
+        Task manualTask = new Task(0, "Manual Task", "Desc", TaskStatus.NEW);
         manualTask.setId(100);  // вручную заданный ID
         manager.createTask(manualTask);
 
         // Создаём задачу без ID (или с id=0), чтобы менеджер сгенерировал ID
-        Task autoTask = new Task("Auto Task", "Desc");
+        Task autoTask = new Task(0, "Auto Task", "Desc",TaskStatus.NEW);
         // id по умолчанию 0 или не задан
         manager.createTask(autoTask);
 
@@ -230,7 +230,7 @@ class TaskManagerTest {
 
     @Test
     void testTaskImmutabilityWhenAddedToManager() {
-        Task originalTask = new Task("Original Title", "Original Description");
+        Task originalTask = new Task(0, "Original Title", "Original Description", TaskStatus.NEW);
         String originalTitle = originalTask.getTitle();
         String originalDescription = originalTask.getDescription();
         int originalId = originalTask.getId();
@@ -254,7 +254,7 @@ class TaskManagerTest {
         String originalName = "Original Name";
         String originalDescription = "Original Description";
 
-        Task task = new Task(originalName, originalDescription);
+        Task task = new Task(0, originalName, originalDescription, TaskStatus.NEW);
         task.setId(1);
 
         historyManager.add(task);

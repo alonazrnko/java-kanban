@@ -3,8 +3,8 @@ import java.util.ArrayList;
 public class Epic extends Task {
     private final ArrayList<Integer> subtaskIds = new ArrayList<>();
 
-    public Epic(String title, String description) {
-        super(title, description);
+    public Epic(int id, String title, String description) {
+        super(id, title, description, TaskStatus.NEW);
     }
 
     public ArrayList<Integer> getSubtaskIds() {
@@ -30,8 +30,7 @@ public class Epic extends Task {
         subtaskIds.remove(Integer.valueOf(subtaskId));
     }
 
-    @Override
-    public String toString() {
-        return String.format("Epic{id=%d, title='%s', subtasks=%s}", id, title, subtaskIds);
+    public void clearSubtasks() {
+        subtaskIds.clear();
     }
 }

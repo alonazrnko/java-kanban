@@ -2,18 +2,22 @@ import java.util.Objects;
 
 public class Task {
     protected int id;
-    protected String title;
-    protected String description;
+    private String title;
+    private String description;
+    private TaskStatus status;
 
-    public Task(String title, String description) {
+    public Task(int id, String title, String description, TaskStatus status) {
+        this.id = id;
         this.title = title;
         this.description = description;
+        this.status = status;
     }
 
     public Task(Task other) {
         this.id = other.id;
         this.title = other.title;
         this.description = other.description;
+        this.status = other.status;
     }
 
     public int getId() {
@@ -40,6 +44,14 @@ public class Task {
         this.description = description;
     }
 
+    public TaskStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TaskStatus status) {
+        this.status = status;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -59,6 +71,9 @@ public class Task {
 
     @Override
     public String toString() {
-        return String.format("Task{id=%d, title='%s'}", id, title);
+        return "Task{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", status=" + status + '\'' + '}';
     }
 }

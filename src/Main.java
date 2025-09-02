@@ -2,16 +2,16 @@ public class Main {
     public static void main(String[] args) {
         TaskManager manager = Managers.getDefault();
 
-        Task task1 = new Task("Задача 1", "Описание задачи 1");
-        Task task2 = new Task("Задача 2", "Описание задачи 2");
+        Task task1 = new Task(0, "Задача 1", "Описание задачи 1", TaskStatus.NEW);
+        Task task2 = new Task(0, "Задача 2", "Описание задачи 2", TaskStatus.NEW);
         manager.createTask(task1);
         manager.createTask(task2);
 
-        Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
+        Epic epic1 = new Epic(0, "Эпик 1", "Описание эпика 1");
         manager.createEpic(epic1);
 
-        Subtask subtask1 = new Subtask("Подзадача 1", "Описание подзадачи 1", epic1.getId());
-        Subtask subtask2 = new Subtask("Подзадача 2", "Описание подзадачи 2", epic1.getId());
+        Subtask subtask1 = new Subtask(0, "Подзадача 1", "Описание подзадачи 1", TaskStatus.NEW, epic1.getId());
+        Subtask subtask2 = new Subtask(0, "Подзадача 2", "Описание подзадачи 2", TaskStatus.NEW, epic1.getId());
         manager.createSubtask(subtask1);
         manager.createSubtask(subtask2);
 
