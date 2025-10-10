@@ -2,7 +2,7 @@ name: Java Tests
 
 on:
   pull_request:
-  
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,3 +21,4 @@ jobs:
 
       - name: Run tests
         run: java -jar ./libs/junit-platform-console-standalone-1.9.3.jar --class-path out --scan-class-path
+
