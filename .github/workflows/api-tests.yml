@@ -15,7 +15,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-
+          
       - name: Compile Java code
         run: javac -d out -cp ./libs/junit-platform-console-standalone-1.9.3.jar $(find ./src -name "*.java")
 
