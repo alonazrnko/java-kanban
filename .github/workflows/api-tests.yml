@@ -5,4 +5,22 @@ on:
 
 jobs:
   build:
-    uses: yandex-praktikum/java-kanban/.github/workflows/api-tests.yml@ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Find all test files
+        run: find ./src -type f -name "*Test.java" > tests.txt
+
+      - name: Compile Java code
+        run: javac -d out -cp ./out:./libs/junit-platform-console-standalone-1.9.3.jar:@tests.txt
+
+      - name: Run tests
+        run: java -jar ./libs/junit-platform-console-standalone-1.9.3.jar --class-path out --scan-class-path
