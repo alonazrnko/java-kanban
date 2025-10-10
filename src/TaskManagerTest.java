@@ -152,17 +152,15 @@ class TaskManagerTest {
         Epic epic = new Epic(0, "Epic", "Desc");
         manager.createEpic(epic);
 
-        Subtask subtask = new Subtask(0, "Sub", "Desc", TaskStatus.NEW, epic.getId());
-        manager.createSubtask(subtask);
+        // Попытка создать подзадачу, которая ссылается на тот же id, что и сам эпик
+        Subtask invalidSubtask = new Subtask(0, "Invalid", "Desc", TaskStatus.NEW, epic.getId());
+        invalidSubtask.setId(epic.getId());
 
-        epic.addSubtask(new Subtask(0, "FakeSub", "Desc", TaskStatus.NEW, epic.getId()) {
-            {
-                setId(epic.getId());
-            }
-        });
+        // Проверяем, что менеджер не добавляет такую подзадачу
+        manager.createSubtask(invalidSubtask);
 
-        // Проверка, что нельзя добавить эпик в самого себя
-        assertFalse(epic.getSubtaskIds().contains(epic.getId()));
+        assertFalse(epic.getSubtaskIds().contains(epic.getId()),
+                "Эпик не должен содержать ссылку на самого себя");
     }
 
     @Test
