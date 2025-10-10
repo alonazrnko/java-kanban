@@ -155,9 +155,11 @@ class TaskManagerTest {
         Subtask subtask = new Subtask(0, "Sub", "Desc", TaskStatus.NEW, epic.getId());
         manager.createSubtask(subtask);
 
-        epic.addSubtask(new Subtask(0, "FakeSub", "Desc", TaskStatus.NEW, epic.getId()) {{
-            setId(epic.getId());
-        }});
+        epic.addSubtask(new Subtask(0, "FakeSub", "Desc", TaskStatus.NEW, epic.getId()) {
+            {
+                setId(epic.getId());
+            }
+        });
 
         // Проверка, что нельзя добавить эпик в самого себя
         assertFalse(epic.getSubtaskIds().contains(epic.getId()));
