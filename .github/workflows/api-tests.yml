@@ -16,11 +16,8 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Find all test files
-        run: find ./src -type f -name "*Test.java" > tests.txt
-
       - name: Compile Java code
-        run: javac -d out -cp ./out:./libs/junit-platform-console-standalone-1.9.3.jar:@tests.txt
+        run: javac -d out -cp ./libs/junit-platform-console-standalone-1.9.3.jar $(find ./src -name "*.java")
 
       - name: Run tests
         run: java -jar ./libs/junit-platform-console-standalone-1.9.3.jar --class-path out --scan-class-path
