@@ -15,7 +15,13 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-          
+
+      - name: Download JUnit
+        run: |
+          mkdir -p libs
+          curl -L -o libs/junit-platform-console-standalone-1.9.3.jar \
+          https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.9.3/junit-platform-console-standalone-1.9.3.jar
+
       - name: Compile Java code
         run: javac -d out -cp ./libs/junit-platform-console-standalone-1.9.3.jar $(find ./src -name "*.java")
 
