@@ -44,37 +44,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    // Преобразуем задачу в строку CSV
-    private String toString(Task task) {
-        String type = task instanceof Epic ? "EPIC" :
-                task instanceof Subtask ? "SUBTASK" : "TASK";
-        String epicId = task instanceof Subtask ? String.valueOf(((Subtask) task).getEpicId()) : "";
-        return String.join(",",
-                String.valueOf(task.getId()),
-                type,
-                task.getTitle(),
-                task.getStatus().name(),
-                task.getDescription(),
-                epicId
-        );
-    }
-
-    // Преобразуем историю в строку
-    private String historyToString(List<Task> history) {
-        List<String> ids = new ArrayList<>();
-        for (Task task : history) {
-            ids.add(String.valueOf(task.getId()));
-        }
-        return String.join(",", ids);
-    }
-
-    // Методы create/update/delete переопределяем для автосохранения
-    @Override
-    public void createTask(Task task) {
-        super.createTask(task);
-        save();
-    }
-
     @Override
     public void createEpic(Epic epic) {
         super.createEpic(epic);
@@ -188,6 +157,30 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             throw new ManagerSaveException("Ошибка загрузки из файла " + file.getAbsolutePath(), e);
         }
         return manager;
+    }
+
+    // Преобразуем задачу в строку CSV
+    private String toString(Task task) {
+        String type = task instanceof Epic ? "EPIC" :
+                task instanceof Subtask ? "SUBTASK" : "TASK";
+        String epicId = task instanceof Subtask ? String.valueOf(((Subtask) task).getEpicId()) : "";
+        return String.join(",",
+                String.valueOf(task.getId()),
+                type,
+                task.getTitle(),
+                task.getStatus().name(),
+                task.getDescription(),
+                epicId
+        );
+    }
+
+    // Преобразуем историю в строку
+    private String historyToString(List<Task> history) {
+        List<String> ids = new ArrayList<>();
+        for (Task task : history) {
+            ids.add(String.valueOf(task.getId()));
+        }
+        return String.join(",", ids);
     }
 
     // Восстановление задачи из строки
