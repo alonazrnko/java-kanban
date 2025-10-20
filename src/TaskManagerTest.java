@@ -1,5 +1,7 @@
 import org.junit.jupiter.api.*;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -123,8 +125,8 @@ class TaskManagerTest {
     }
 
     @Test
-    void testHistoryLimitAndDuplicates() {
-        // Создаем 12 задач
+    void testHistoryManagerNoDuplicates() {
+        // Создаём 12 задач
         for (int i = 1; i <= 12; i++) {
             manager.createTask(new Task(0, "Task" + i, "Desc" + i, TaskStatus.NEW));
         }
@@ -135,28 +137,30 @@ class TaskManagerTest {
         }
 
         ArrayList<Task> history = manager.getHistory();
-        assertEquals(10, history.size(), "История должна содержать максимум 10 элементов");
 
-        // Проверяем, что это последние 10 (с 3 по 12)
-        for (int i = 0; i < 10; i++) {
-            assertEquals(i + 3, history.get(i).getId());
-        }
+        // Проверяем, что все задачи есть и нет дубликатов
+        assertEquals(12, history.size(), "История должна содержать все просмотры без ограничений");
+
+        // Проверяем уникальность
+        long distinctCount = history.stream().map(Task::getId).distinct().count();
+        assertEquals(12, distinctCount, "В истории не должно быть повторов");
     }
+
 
     @Test
     void testEpicCannotContainItselfAsSubtask() {
         Epic epic = new Epic(0, "Epic", "Desc");
         manager.createEpic(epic);
 
-        Subtask subtask = new Subtask(0, "Sub", "Desc", TaskStatus.NEW, epic.getId());
-        manager.createSubtask(subtask);
+        // Попытка создать подзадачу, которая ссылается на тот же id, что и сам эпик
+        Subtask invalidSubtask = new Subtask(0, "Invalid", "Desc", TaskStatus.NEW, epic.getId());
+        invalidSubtask.setId(epic.getId());
 
-        epic.addSubtask(new Subtask(0, "FakeSub", "Desc", TaskStatus.NEW, epic.getId()) {{
-            setId(epic.getId());
-        }});
+        // Проверяем, что менеджер не добавляет такую подзадачу
+        manager.createSubtask(invalidSubtask);
 
-        // Проверка, что нельзя добавить эпик в самого себя
-        assertFalse(epic.getSubtaskIds().contains(epic.getId()));
+        assertFalse(epic.getSubtaskIds().contains(epic.getId()),
+                "Эпик не должен содержать ссылку на самого себя");
     }
 
     @Test
@@ -218,7 +222,7 @@ class TaskManagerTest {
         manager.createTask(manualTask);
 
         // Создаём задачу без ID (или с id=0), чтобы менеджер сгенерировал ID
-        Task autoTask = new Task(0, "Auto Task", "Desc",TaskStatus.NEW);
+        Task autoTask = new Task(0, "Auto Task", "Desc", TaskStatus.NEW);
         // id по умолчанию 0 или не задан
         manager.createTask(autoTask);
 
@@ -248,35 +252,26 @@ class TaskManagerTest {
     }
 
     @Test
-    void testHistoryManagerPreservesTaskVersions() {
+    void testHistoryManagerKeepsOnlyLatestVersion() {
         HistoryManager historyManager = new InMemoryHistoryManager();
 
-        String originalName = "Original Name";
-        String originalDescription = "Original Description";
-
-        Task task = new Task(0, originalName, originalDescription, TaskStatus.NEW);
+        Task task = new Task(0, "Original Name", "Original Description", TaskStatus.NEW);
         task.setId(1);
 
+        // Первый просмотр
         historyManager.add(task);
 
+        // Меняем данные и "просматриваем" заново
         task.setTitle("Updated Name");
         task.setDescription("Updated Description");
-
         historyManager.add(task);
 
-        ArrayList<Task> history = historyManager.getHistory();
+        List<Task> history = historyManager.getHistory();
 
-        assertFalse(history.isEmpty(), "История должна содержать задачи после добавления");
-        assertEquals(2, history.size(), "В истории должно быть 2 версии задачи");
+        assertEquals(1, history.size(), "В истории должна быть только последняя версия задачи");
 
-        Task firstVersion = history.get(0);
-
-        assertEquals(originalName, firstVersion.getTitle(), "Имя первой версии должно быть оригинальным");
-        assertEquals(originalDescription, firstVersion.getDescription(), "Описание первой версии должно быть оригинальным");
-
-        Task secondVersion = history.get(1);
-
-        assertEquals("Updated Name", secondVersion.getTitle(), "Имя второй версии должно быть обновлённым");
-        assertEquals("Updated Description", secondVersion.getDescription(), "Описание второй версии должно быть обновлённым");
+        Task latest = history.get(0);
+        assertEquals("Updated Name", latest.getTitle(), "Имя должно быть обновлённым");
+        assertEquals("Updated Description", latest.getDescription(), "Описание должно быть обновлённым");
     }
 }

@@ -1,7 +1,7 @@
 import java.util.Objects;
 
 public class Task {
-    protected int id;
+    private int id;
     private String title;
     private String description;
     private TaskStatus status;

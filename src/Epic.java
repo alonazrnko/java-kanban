@@ -15,7 +15,7 @@ public class Epic extends Task {
         if (subtask == null) {
             return false;
         }
-        if (subtask.getId() == this.id) {
+        if (subtask.getId() == this.getId()) {
             return false;
         }
         if (!subtaskIds.contains(subtask.getId())) {
