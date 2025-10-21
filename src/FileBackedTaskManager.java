@@ -10,40 +10,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         this.file = file;
     }
 
-    // Метод автосохранения
-    public void save() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            // Заголовок CSV
-            writer.write("id,type,name,status,description,epic");
-            writer.newLine();
-
-            // Сохраняем все задачи
-            for (Task task : getTasks()) {
-                writer.write(toString(task));
-                writer.newLine();
-            }
-            // Сохраняем все эпики
-            for (Epic epic : getEpics()) {
-                writer.write(toString(epic));
-                writer.newLine();
-            }
-            // Сохраняем все подзадачи
-            for (Subtask sub : getSubtasks()) {
-                writer.write(toString(sub));
-                writer.newLine();
-            }
-
-            writer.newLine();
-
-            // Сохраняем историю просмотров
-            String historyLine = historyToString(getHistory());
-            writer.write(historyLine);
-
-        } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка сохранения в файл " + file.getAbsolutePath(), e);
-        }
-    }
-
     @Override
     public void createEpic(Epic epic) {
         super.createEpic(epic);
@@ -205,6 +171,40 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 return subtask;
             default:
                 throw new IllegalArgumentException("Неизвестный тип задачи: " + type);
+        }
+    }
+
+    // Метод автосохранения
+    private void save() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            // Заголовок CSV
+            writer.write("id,type,name,status,description,epic");
+            writer.newLine();
+
+            // Сохраняем все задачи
+            for (Task task : getTasks()) {
+                writer.write(toString(task));
+                writer.newLine();
+            }
+            // Сохраняем все эпики
+            for (Epic epic : getEpics()) {
+                writer.write(toString(epic));
+                writer.newLine();
+            }
+            // Сохраняем все подзадачи
+            for (Subtask sub : getSubtasks()) {
+                writer.write(toString(sub));
+                writer.newLine();
+            }
+
+            writer.newLine();
+
+            // Сохраняем историю просмотров
+            String historyLine = historyToString(getHistory());
+            writer.write(historyLine);
+
+        } catch (IOException e) {
+            throw new ManagerSaveException("Ошибка сохранения в файл " + file.getAbsolutePath(), e);
         }
     }
 }

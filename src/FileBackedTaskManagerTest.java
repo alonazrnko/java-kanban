@@ -24,9 +24,6 @@ class FileBackedTaskManagerTest {
 
     @Test
     void saveAndLoadEmptyManager() {
-        // Менеджер пустой
-        manager.save();
-
         FileBackedTaskManager loaded = FileBackedTaskManager.loadFromFile(file);
 
         assertTrue(loaded.getTasks().isEmpty(), "Задачи должны быть пустыми");
