@@ -2,7 +2,6 @@ import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    // Узел двусвязного списка
     private static class Node {
         Task task;
         Node prev;
@@ -22,7 +21,6 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void add(Task task) {
         if (task == null) return;
-        // Если задача уже есть — удаляем старую запись
         remove(task.getId());
         linkLast(task);
     }
