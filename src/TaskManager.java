@@ -1,17 +1,20 @@
 import java.util.ArrayList;
+import java.util.Optional;
 
 public interface TaskManager {
     ArrayList<Task> getTasks();
+
+    ArrayList<Task> getPrioritizedTasks();
 
     ArrayList<Epic> getEpics();
 
     ArrayList<Subtask> getSubtasks();
 
-    Task getTask(int id);
+    Optional<Task> getTask(int id);
 
-    Epic getEpic(int id);
+    Optional<Epic> getEpic(int id);
 
-    Subtask getSubtask(int id);
+    Optional<Subtask> getSubtask(int id);
 
     void createTask(Task task);
 
