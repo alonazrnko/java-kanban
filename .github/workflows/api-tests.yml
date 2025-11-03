@@ -22,8 +22,10 @@ jobs:
 
       - name: Download dependencies
         run: |
-          curl -L -o libs/junit-platform-console-standalone-1.9.3.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.9.3/junit-platform-console-standalone-1.9.3.jar
-          curl -L -o libs/gson-2.10.1.jar https://repo1.maven.org/maven2/com/google/code/gson/gson/2.10.1/gson-2.10.1.jar
+          curl -L -o libs/junit-platform-console-standalone-1.9.3.jar \
+          https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.9.3/junit-platform-console-standalone-1.9.3.jar
+          curl -L -o libs/gson-2.10.1.jar \
+          https://repo1.maven.org/maven2/com/google/code/gson/gson/2.10.1/gson-2.10.1.jar
 
       - name: Compile Java code
         run: javac -d out -cp "libs/*" $(find ./src -name "*.java")
