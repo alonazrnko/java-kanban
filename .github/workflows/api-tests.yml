@@ -31,4 +31,5 @@ jobs:
         run: javac -d out -cp "libs/*" $(find ./src -name "*.java")
 
       - name: Run tests
-        run: java -jar libs/junit-platform-console-standalone-1.9.3.jar -cp "out:libs/*" --scan-class-path
+        run: java -cp "out:libs/*" org.junit.platform.console.ConsoleLauncher --scan-class-path
+
