@@ -6,6 +6,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -16,8 +17,16 @@ jobs:
           distribution: temurin
           java-version: 21
 
+      - name: Create libs directory
+        run: mkdir -p libs
+
+      - name: Download dependencies
+        run: |
+          curl -L -o libs/junit-platform-console-standalone-1.9.3.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.9.3/junit-platform-console-standalone-1.9.3.jar
+          curl -L -o libs/gson-2.10.1.jar https://repo1.maven.org/maven2/com/google/code/gson/gson/2.10.1/gson-2.10.1.jar
+
       - name: Compile Java code
-        run: javac -d out -cp ./libs/junit-platform-console-standalone-1.9.3.jar $(find ./src -name "*.java")
+        run: javac -d out -cp "libs/*" $(find ./src -name "*.java")
 
       - name: Run tests
-        run: javac -d out -cp "./libs/*" $(find ./src -name "*.java")
+        run: java -jar libs/junit-platform-console-standalone-1.9.3.jar -cp "out:libs/*" --scan-class-path
