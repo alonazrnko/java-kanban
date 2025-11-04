@@ -171,6 +171,21 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
+    public void deleteTasks() {
+        tasks.clear();
+    }
+
+    @Override
+    public void deleteSubtasks() {
+        subtasks.clear();
+    }
+
+    @Override
+    public void deleteEpics() {
+        epics.clear();
+    }
+
+    @Override
     public ArrayList<Subtask> getEpicSubtasks(int epicId) {
         return subtasks.values().stream().filter(subtask -> subtask.getEpicId() == epicId).collect(Collectors.toCollection(ArrayList::new));
     }
