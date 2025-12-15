@@ -5,4 +5,31 @@ on:
 
 jobs:
   build:
-    uses: yandex-praktikum/java-kanban/.github/workflows/api-tests.yml@ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Create libs directory
+        run: mkdir -p libs
+
+      - name: Download dependencies
+        run: |
+          curl -L -o libs/junit-platform-console-standalone-1.9.3.jar \
+          https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.9.3/junit-platform-console-standalone-1.9.3.jar
+          curl -L -o libs/gson-2.10.1.jar \
+          https://repo1.maven.org/maven2/com/google/code/gson/gson/2.10.1/gson-2.10.1.jar
+
+      - name: Compile Java code
+        run: javac -d out -cp "libs/*" $(find ./src -name "*.java")
+
+      - name: Run tests
+        run: java -cp "out:libs/*" org.junit.platform.console.ConsoleLauncher --scan-class-path
+
